@@ -1,6 +1,9 @@
-﻿<h3>Component1</h3>
-
-@code {
-
-}
-
+﻿<AuthorizeView>
+    <Authorized>
+        <span class="navbar-text me-3">Hello, @context.User.Identity?.Name!</span>
+        <a href="/api/auth/logout" class="btn btn-outline-primary">Log out</a>
+    </Authorized>
+    <NotAuthorized>
+        <a href="/api/auth/login" class="btn btn-primary">Log in with GitHub</a>
+    </NotAuthorized>
+</AuthorizeView>
