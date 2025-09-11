@@ -1,13 +1,28 @@
-﻿using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Web;
-using github_dashboard.Data;
+﻿using Microsoft.AspNetCore.Authentication.Cookies;
+using github_dashboard.Data; // Using the namespace from your file
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
-builder.Services.AddSingleton<WeatherForecastService>();
+builder.Services.AddControllers(); // Needed for the AuthController
+
+// 1. Add Authentication services
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = "GitHub";
+})
+    .AddCookie()
+    .AddGitHub("GitHub", options =>
+    {
+        options.ClientId = builder.Configuration["GitHub:ClientId"];
+        options.ClientSecret = builder.Configuration["GitHub:ClientSecret"];
+        options.CallbackPath = "/signin-github";
+        options.Scope.Add("repo");
+        options.SaveTokens = true;
+    });
 
 var app = builder.Build();
 
@@ -15,7 +30,6 @@ var app = builder.Build();
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Error");
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
 
@@ -25,6 +39,12 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
+// 2. Add Authentication and Authorization middleware
+// IMPORTANT: This must come AFTER UseRouting() and BEFORE MapBlazorHub()
+app.UseAuthentication();
+app.UseAuthorization();
+
+app.MapControllers(); // This maps our AuthController
 app.MapBlazorHub();
 app.MapFallbackToPage("/_Host");
 
