@@ -1,15 +1,15 @@
 ﻿@inherits LayoutComponentBase
 
-<PageTitle>github-dashboard</PageTitle>
-
 <div class="page">
     <div class="sidebar">
         <NavMenu />
     </div>
 
     <main>
-        <div class="top-row px-4">
-            <a href="https://docs.microsoft.com/aspnet/" target="_blank">About</a>
+        <div class="top-row px-4 auth">
+            <div class="ms-auto">
+                <logindisplay />
+            </div>
         </div>
 
         <article class="content px-4">
@@ -17,4 +17,3 @@
         </article>
     </main>
 </div>
-

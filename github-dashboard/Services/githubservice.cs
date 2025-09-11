@@ -1,47 +1,58 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
+﻿using System.Net;
+using System.Net.Http.Headers;
+using System.Security.Claims;
+using github_dashboard.Data;
+using Microsoft.AspNetCore.Authentication;
+using Octokit;
 
-// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+namespace github_dashboard.Services;
 
-namespace github_dashboard.Services
+public class GitHubService
 {
-    [Route("api/[controller]")]
-    public class ValuesController : Controller
+    private readonly IHttpContextAccessor _httpContextAccessor;
+
+    public GitHubService(IHttpContextAccessor httpContextAccessor)
     {
-        // GET: api/values
-        [HttpGet]
-        public IEnumerable<string> Get()
+        _httpContextAccessor = httpContextAccessor;
+    }
+
+    public async Task<IEnumerable<Repository>> GetRepositoriesAsync()
+    {
+        var httpContext = _httpContextAccessor.HttpContext;
+
+        if (httpContext == null || !httpContext.User.Identity.IsAuthenticated)
         {
-            return new string[] { "value1", "value2" };
+            return Enumerable.Empty<Repository>();
         }
 
-        // GET api/values/5
-        [HttpGet("{id}")]
-        public string Get(int id)
+        // 1. Get the access token saved during login
+        var accessToken = await httpContext.GetTokenAsync("access_token");
+
+        if (string.IsNullOrEmpty(accessToken))
         {
-            return "value";
+            return Enumerable.Empty<Repository>();
         }
 
-        // POST api/values
-        [HttpPost]
-        public void Post([FromBody]string value)
+        // 2. Create an authenticated Octokit client
+        var github = new GitHubClient(new ProductHeaderValue("github-dashboard"))
         {
-        }
+            Credentials = new Credentials(accessToken)
+        };
 
-        // PUT api/values/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody]string value)
-        {
-        }
+        // 3. Fetch all repositories for the current user
+        var octokitRepos = await github.Repository.GetAllForCurrent();
 
-        // DELETE api/values/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
+        // 4. Map the data to our simplified Repository model
+        return octokitRepos.Select(r => new Repository
         {
-        }
+            Id = r.Id,
+            Name = r.Name,
+            Description = r.Description ?? "No description.",
+            Url = r.HtmlUrl,
+            Stars = r.StargazersCount,
+            Forks = r.ForksCount,
+            OpenIssues = r.OpenIssuesCount,
+            LastPush = r.PushedAt ?? r.UpdatedAt
+        }).ToList();
     }
 }
-
