@@ -1,11 +1,29 @@
-﻿{
-  "ConnectionStrings": {
-    "DefaultConnection": "DataSource=app.db"
-  },
-  "Logging": {
-    "LogLevel": {
-      "Default": "Warning"
-    }
-  },
-  "AllowedHosts": "*"
-}
+﻿General
+*.swp
+*~
+*.DS_Store
+
+Visual Studio / Rider specific
+.vs/
+.idea/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+Build results
+[Dd]ebug/
+[Dd]ebugPublic/
+[Rr]elease/
+[Rr]eleases/
+x64/
+x86/
+build/
+bld/
+[Bb]in/
+[Oo]bj/
+
+Other
+*.zip
+*.rar
+*.7z

@@ -1,10 +1,54 @@
 ﻿@page "/"
+@inject github_dashboard.Services.GitHubService GitHubService
+@using github_dashboard.Data
 
-<PageTitle>Index</PageTitle>
+<PageTitle>GitHub Dashboard</PageTitle>
 
-<h1>Hello, world!</h1>
+<h1>Your Repositories</h1>
 
-Welcome to your new app.
+<AuthorizeView>
+    <Authorized>
+        @if (repositories == null)
+        {
+            <p><em>Loading repositories...</em></p>
+        }
+        else if (!repositories.Any())
+        {
+            <p>No repositories found for your account.</p>
+        }
+        else
+        {
+            <div class="repo-grid">
+                @foreach (var repo in repositories)
+                {
+                    <div class="repo-card">
+                        <h5>
+                            <a href="@repo.Url" target="_blank" rel="noopener noreferrer">@repo.Name</a>
+                        </h5>
+                        <p>@repo.Description</p>
+                        <div class="repo-stats">
+                            <span>⭐ @repo.Stars</span>
+                            <span>🔄 @repo.Forks</span>
+                            <span>⚠️ @repo.OpenIssues</span>
+                        </div>
+                        <div class="repo-footer">
+                            <small>Last push: @repo.LastPush.ToString("yyyy-MM-dd")</small>
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+    </Authorized>
+    <NotAuthorized>
+        <p>Please log in with GitHub to see your repositories.</p>
+    </NotAuthorized>
+</AuthorizeView>
 
-<SurveyPrompt Title="How is Blazor working for you?" />
+@code {
+    private IEnumerable<Repository>? repositories;
 
+    protected override async Task OnInitializedAsync()
+    {
+        repositories = await GitHubService.GetRepositoriesAsync();
+    }
+}
