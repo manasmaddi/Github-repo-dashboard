@@ -1,6 +1,6 @@
 ﻿namespace github_dashboard.Data;
 
-// A simple model to hold the essential information for a GitHub repository.
+// A simple model to hold the essential information 
 public class Repository
 {
     public long Id { get; set; }
