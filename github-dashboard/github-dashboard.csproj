@@ -15,11 +15,19 @@
   <ItemGroup>
     <None Remove="Controllers\" />
     <None Remove="Data\" />
-    <None Remove="Services\" />
+    <None Remove="Data\Services\" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Controllers\" />
     <Folder Include="Data\" />
-    <Folder Include="Services\" />
+    <Folder Include="Data\Services\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Remove="Pages\Template.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Update="Pages\repositorydetail.cs">
+      <DependentUpon>repositorydetail.razor</DependentUpon>
+    </Compile>
   </ItemGroup>
 </Project>
