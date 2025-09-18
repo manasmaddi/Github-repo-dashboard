@@ -7,6 +7,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
 builder.Services.AddControllers(); // Needed for the AuthController
+builder.Services.AddMemoryCache();
 
 // 1. Add Authentication services
 builder.Services.AddAuthentication(options =>
