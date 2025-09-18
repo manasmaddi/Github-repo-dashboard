@@ -1,4 +1,4 @@
-﻿@page "/"
+@page "/"
 @inject github_dashboard.Services.GitHubService GitHubService
 @using github_dashboard.Data
 
@@ -27,9 +27,9 @@
                         </h5>
                         <p>@repo.Description</p>
                         <div class="repo-stats">
-                            <span>⭐ @repo.Stars</span>
-                            <span>🔄 @repo.Forks</span>
-                            <span>⚠️ @repo.OpenIssues</span>
+                            <span>@repo.Stars</span>
+                            <span>@repo.Forks</span>
+                            <span>@repo.OpenIssues</span>
                         </div>
                         <div class="repo-footer">
                             <small>Last push: @repo.LastPush.ToString("yyyy-MM-dd")</small>
