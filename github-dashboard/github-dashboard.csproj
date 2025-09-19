@@ -29,5 +29,14 @@
     <Compile Update="Pages\repositorydetail.cs">
       <DependentUpon>repositorydetail.razor</DependentUpon>
     </Compile>
+    <Compile Update="Pages\Template.cs">
+      <DependentUpon>Template.cshtml</DependentUpon>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Pages\repositorydetail.razor">
+      <Generator>RazorTemplatePreprocessor</Generator>
+      <LastGenOutput>repositorydetail.cs</LastGenOutput>
+    </None>
   </ItemGroup>
 </Project>
