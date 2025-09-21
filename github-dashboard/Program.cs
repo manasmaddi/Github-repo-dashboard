@@ -12,7 +12,6 @@ builder.Services.AddServerSideBlazor();
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddMemoryCache();
 
-// Register the GitHubService (assuming it's in the Data namespace)
 builder.Services.AddScoped<GitHubService>();
 
 // --- AUTHENTICATION SETUP ---
@@ -20,16 +19,16 @@ builder.Services.AddAuthentication(options =>
 {
     options.DefaultAuthenticateScheme = CookieAuthenticationDefaults.AuthenticationScheme;
     options.DefaultSignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-    options.DefaultChallengeScheme = "GitHub"; // The default scheme for challenges is GitHub
+    options.DefaultChallengeScheme = "GitHub"; 
 })
-    .AddCookie() // Adds cookie-based authentication
-    .AddGitHub("GitHub", options => // Adds GitHub as an OAuth provider
+    .AddCookie() // Adds cookie-based auth
+    .AddGitHub("GitHub", options => 
     {
         options.ClientId = builder.Configuration["GitHub:ClientId"]!;
         options.ClientSecret = builder.Configuration["GitHub:ClientSecret"]!;
-        options.Scope.Add("repo"); // Request permission to read repositories
+        options.Scope.Add("repo");
 
-        // This part is important: it saves the access token so we can use it later
+ 
         options.Events = new OAuthEvents
         {
             OnCreatingTicket = async context =>
@@ -44,7 +43,6 @@ builder.Services.AddAuthentication(options =>
             }
         };
     });
-// --- END AUTHENTICATION SETUP ---
 
 var app = builder.Build();
 
@@ -59,12 +57,12 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseRouting();
 
-// --- MIDDLEWARE ORDER IS CRITICAL ---
-app.UseAuthentication(); // 1. Who are you?
-app.UseAuthorization();  // 2. Are you allowed to be here?
-// --- END MIDDLEWARE ---
 
-app.MapControllers(); // Needed for the AuthController
+app.UseAuthentication(); 
+app.UseAuthorization(); 
+
+
+app.MapControllers(); 
 app.MapBlazorHub();
 app.MapFallbackToPage("/_Host");
 
