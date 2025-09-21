@@ -11,32 +11,28 @@
   <PropertyGroup Condition=" '$(RunConfiguration)' == 'http' " />
   <ItemGroup>
     <PackageReference Include="AspNet.Security.OAuth.GitHub" Version="7.0.4" />
+    <PackageReference Include="Octokit" Version="14.0.0" />
   </ItemGroup>
   <ItemGroup>
     <None Remove="Controllers\" />
     <None Remove="Data\" />
-    <None Remove="Data\Services\" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Controllers\" />
     <Folder Include="Data\" />
-    <Folder Include="Data\Services\" />
   </ItemGroup>
   <ItemGroup>
     <Content Remove="Pages\Template.cshtml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Update="Pages\repositorydetail.cs">
-      <DependentUpon>repositorydetail.razor</DependentUpon>
-    </Compile>
     <Compile Update="Pages\Template.cs">
       <DependentUpon>Template.cshtml</DependentUpon>
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Pages\repositorydetail.razor">
+    <None Include="Pages\RepoDetail.razor">
       <Generator>RazorTemplatePreprocessor</Generator>
-      <LastGenOutput>repositorydetail.cs</LastGenOutput>
+      <LastGenOutput>RepoDetail.cs</LastGenOutput>
     </None>
   </ItemGroup>
 </Project>
