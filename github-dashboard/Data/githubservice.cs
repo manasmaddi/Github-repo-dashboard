@@ -45,7 +45,7 @@ public class GitHubService
                 Stars = r.StargazersCount,
                 Forks = r.ForksCount,
                 OpenIssues = r.OpenIssuesCount,
-                // FIX: Correctly handle the nullable DateTimeOffset.
+
                 LastPush = r.PushedAt ?? r.UpdatedAt
             }).ToList();
 
@@ -101,7 +101,6 @@ public class GitHubService
         catch (NotFoundException)
         {
             // This happens if the repo ID is invalid or not accessible
-            // Log the exception here in a real app
             return null;
         }
     }

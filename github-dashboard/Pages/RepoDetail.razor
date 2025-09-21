@@ -107,10 +107,8 @@
         pageState = PageState.Loading;
         try
         {
-            // Pass the cancellation token to the service call.
             repoDetails = await GitHubService.GetRepositoryDetailsAsync(RepoId);
 
-            // Enterprise Practice: Explicitly check for a null result from the service.
             if (repoDetails is null)
             {
                 pageState = PageState.NotFound;
@@ -122,11 +120,10 @@
         }
         catch (OperationCanceledException)
         {
-            // This is expected if the user navigates away. No action needed.
+       
         }
         catch (Exception ex)
         {
-            //  Logger.LogError(ex, "Error loading repository details for ID {RepoId}", RepoId);
             pageState = PageState.Error;
         }
     }
