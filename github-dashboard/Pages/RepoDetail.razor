@@ -1,0 +1,140 @@
+﻿@page "/repo/{RepoId:long}"
+@inject github_dashboard.Data.GitHubService GitHubService
+@using github_dashboard.Data
+@attribute [Authorize]
+@implements IDisposable
+
+<PageTitle>Repo Details</PageTitle>
+
+@switch (pageState)
+{
+    case PageState.Loading:
+        <div class="loading-indicator">
+            <div class="spinner"></div>
+            <p>Loading repository details...</p>
+        </div>
+        break;
+
+    case PageState.Error:
+        <div class="alert alert-danger">
+            <strong>Error:</strong> An unexpected error occurred while loading repository details.
+            <a href="/" class="alert-link">Return to Dashboard</a>
+        </div>
+        break;
+
+    case PageState.NotFound:
+        <div class="alert alert-warning">
+            <strong>Not Found:</strong> The repository could not be found. It may be private or no longer exist.
+            <a href="/" class="alert-link">Return to Dashboard</a>
+        </div>
+        break;
+
+    case PageState.Loaded when repoDetails != null:
+        <div class="repo-header">
+            <h3>
+                <a href="@repoDetails.Url" target="_blank" rel="noopener noreferrer">@repoDetails.Name</a>
+            </h3>
+            <p>@repoDetails.Description</p>
+        </div>
+
+        <div class="details-grid">
+            <div class="detail-card">
+                <h4>Recent Commits</h4>
+                @if (repoDetails.RecentCommits.Any())
+                {
+                    <ul class="commit-list">
+                        @foreach (var commit in repoDetails.RecentCommits)
+                        {
+                            <li>
+                                <strong title="@commit.Sha">@(commit.Message.Split('\n').First())</strong>
+                                <small>by @commit.Author on @(commit.Timestamp.ToLocalTime().ToString("MMM dd, yyyy"))</small>
+                            </li>
+                        }
+                    </ul>
+                }
+                else
+                {
+                    <p>No recent commits found.</p>
+                }
+            </div>
+            <div class="detail-card">
+                <h4>Top Contributors</h4>
+                @if (repoDetails.Contributors.Any())
+                {
+                    <ul class="contributor-list">
+                        @foreach (var contributor in repoDetails.Contributors)
+                        {
+                            <li>
+                                <img src="@contributor.AvatarUrl" alt="@(contributor.Login) avatar" />
+                                <a href="@contributor.HtmlUrl" target="_blank" rel="noopener noreferrer">@contributor.Login</a>
+                                <span>(@(contributor.Contributions) contributions)</span>
+                            </li>
+                        }
+                    </ul>
+                }
+                else
+                {
+                    <p>No contributor data available.</p>
+                }
+            </div>
+        </div>
+        <a href="/" class="back-link">← Back to Dashboard</a>
+        break;
+}
+
+@code {
+    [Parameter]
+    public long RepoId { get; set; }
+
+    
+    private readonly CancellationTokenSource _cts = new();
+
+    
+    private enum PageState { Loading, Loaded, Error, NotFound }
+    private PageState pageState = PageState.Loading;
+
+    private RepositoryDetail? repoDetails;
+
+   
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadRepoDetailsAsync();
+    }
+
+    private async Task LoadRepoDetailsAsync()
+    {
+        pageState = PageState.Loading;
+        try
+        {
+            // Pass the cancellation token to the service call.
+            repoDetails = await GitHubService.GetRepositoryDetailsAsync(RepoId);
+
+            // Enterprise Practice: Explicitly check for a null result from the service.
+            if (repoDetails is null)
+            {
+                pageState = PageState.NotFound;
+            }
+            else
+            {
+                pageState = PageState.Loaded;
+            }
+        }
+        catch (OperationCanceledException)
+        {
+            // This is expected if the user navigates away. No action needed.
+        }
+        catch (Exception ex)
+        {
+            //  Logger.LogError(ex, "Error loading repository details for ID {RepoId}", RepoId);
+            pageState = PageState.Error;
+        }
+    }
+
+    public void Dispose()
+    {
+        _cts.Cancel();
+        _cts.Dispose();
+    }
+}
+
