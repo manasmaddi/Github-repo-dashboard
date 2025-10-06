@@ -22,7 +22,6 @@ A **Blazor Server** application built on **.NET** that lets users securely view 
   - 🔐 **Secure GitHub Login** – Integrated with the official **OAuth flow**. Unauthenticated users are automatically redirected to the login page.
   - 📊 **Repository Overview** – Displays a grid-based list of your repositories with key stats like stars, forks, and open issues.
   - 📈 **Repository Details** – Shows recent commits, top contributors, and a list of open issues for a selected repository.
-  - 🧠 **Issue Management** – Create new issues or add labels (e.g., `bug`, `enhancement`, `help wanted`) directly from the UI.
   - 🧱 **Clean Architecture** – All GitHub API logic is handled by a dedicated `GitHubService`, keeping Blazor components clean and UI-focused.
 
 -----
